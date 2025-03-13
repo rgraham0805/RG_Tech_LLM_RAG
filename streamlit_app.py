@@ -24,8 +24,11 @@ COLUMNS = [
     "category"
 ]
 
-session = get_active_session()
-root = Root(session)                         
+#session = get_active_session()
+#root = Root(session)                         
+#added this for 
+cnx = st.connection("snowflake")
+session = cnx.session()
 
 svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
    
@@ -107,9 +110,6 @@ def complete(myquestion):
     return df_response, relative_paths
 
 def main():
-    #added this for 
-    cnx = st.connection("snowflake")
-    session = cnx.session()
 
     st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
     st.write("This is the list of documents you already have and that will be used to answer your questions:")
