@@ -32,7 +32,7 @@ COLUMNS = [
 #added this for 
 cnx = st.connection("snowflake")
 session = cnx.session()
-#svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
+svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
    
    
 ### Functions
