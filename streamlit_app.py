@@ -28,7 +28,7 @@ COLUMNS = [
 ]
 
 #session = get_active_session()
-root = Root(session)                         
+#root = Root(session)                         
 #added this for 
 cnx = st.connection("snowflake")
 session = cnx.session()
