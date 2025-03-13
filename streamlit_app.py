@@ -18,6 +18,11 @@ CORTEX_SEARCH_DATABASE = "RG_SEARCH_DOCS"
 CORTEX_SEARCH_SCHEMA = "DATA"
 CORTEX_SEARCH_SERVICE = "RG_SEARCH_SERVICE_CS"
 svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
+#session = get_active_session()
+#root = Root(session)                         
+#added this for 
+cnx = st.connection("snowflake")
+session = cnx.session()
 ######
 ######
 
