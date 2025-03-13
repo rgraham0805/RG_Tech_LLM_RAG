@@ -1,6 +1,6 @@
 # Import python packages
 import streamlit as st
-from snowflake.snowpark.context import get_active_session
+#from snowflake.snowpark.context import get_active_session
 from snowflake.core import Root
 import pandas as pd
 import json
@@ -107,7 +107,10 @@ def complete(myquestion):
     return df_response, relative_paths
 
 def main():
-    
+    #added this for 
+    cnx = st.connection("snowflake")
+    session = cnx.session()
+
     st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
     st.write("This is the list of documents you already have and that will be used to answer your questions:")
     docs_available = session.sql("ls @docs").collect()
