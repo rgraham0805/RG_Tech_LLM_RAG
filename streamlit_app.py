@@ -17,7 +17,16 @@ NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it 
 CORTEX_SEARCH_DATABASE = "RG_SEARCH_DOCS"
 CORTEX_SEARCH_SCHEMA = "DATA"
 CORTEX_SEARCH_SERVICE = "RG_SEARCH_SERVICE_CS"
-svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
+
+# Retrieve the database
+database = root.databases[CORTEX_SEARCH_DATABASE]
+
+# Retrieve the schema from the database
+schema = database.schemas[CORTEX_SEARCH_SCHEMA]
+
+# Retrieve the search service from the schema
+svc = schema.cortex_search_services[CORTEX_SEARCH_SERVICE]
+#svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
 #session = get_active_session()
 #root = Root(session)                         
 #added this for 
