@@ -1,7 +1,7 @@
 # Import python packages
 import streamlit as st
 #from snowflake.snowpark.context import get_active_session
-from snowflake.core import Root
+from snowflake.core import root
 import pandas as pd
 import json
 import requests
