@@ -17,6 +17,7 @@ NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it 
 CORTEX_SEARCH_DATABASE = "RG_SEARCH_DOCS"
 CORTEX_SEARCH_SCHEMA = "DATA"
 CORTEX_SEARCH_SERVICE = "RG_SEARCH_SERVICE_CS"
+svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
 ######
 ######
 
@@ -32,8 +33,8 @@ COLUMNS = [
 #added this for 
 cnx = st.connection("snowflake")
 session = cnx.session()
-svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
-   
+
+#svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
    
 ### Functions
      
