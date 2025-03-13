@@ -4,6 +4,9 @@ import streamlit as st
 from snowflake.core import Root
 import pandas as pd
 import json
+import requests
+
+from snowflake.snowpark.functions import col
 
 pd.set_option("max_colwidth",None)
 
