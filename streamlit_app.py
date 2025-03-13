@@ -19,7 +19,7 @@ CORTEX_SEARCH_SCHEMA = "DATA"
 CORTEX_SEARCH_SERVICE = "RG_SEARCH_SERVICE_CS"
 
 # Retrieve the database
-database = root.databases[CORTEX_SEARCH_DATABASE]
+database = root.databases["RG_SEARCH_DOCS"]
 
 # Retrieve the schema from the database
 schema = database.schemas[CORTEX_SEARCH_SCHEMA]
