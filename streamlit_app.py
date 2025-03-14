@@ -133,6 +133,7 @@ def main():
 
     st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
     st.write("This is the list of documents you already have and that will be used to answer your questions:")
+    session.sql("USE DATABASE RG_SEARCH_DOCS.DATA.DOCS").collect()
     docs_available = session.sql("ls @docs").collect()
     list_docs = []
     for doc in docs_available:
