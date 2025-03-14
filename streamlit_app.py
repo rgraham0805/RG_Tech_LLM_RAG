@@ -2,6 +2,7 @@
 import streamlit as st
 import snowflake.core
 #from snowflake.snowpark.context import get_active_session
+import snowflake.snowpark.context
 from snowflake.core import Root
 import pandas as pd
 import json
