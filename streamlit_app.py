@@ -144,7 +144,7 @@ def main():
 
     st.session_state.rag = st.sidebar.checkbox('Use your own documents as context?')
 
-    question = st.text_input("Enter question", placeholder="Is there any special lubricant to be used with the premium bike?", label_visibility="collapsed")
+    question = st.text_input("Enter question", placeholder="What are multi-modal LLMs?", label_visibility="collapsed")
 
     if question:
         response, relative_paths = complete(question)
