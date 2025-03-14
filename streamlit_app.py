@@ -8,7 +8,7 @@ import json
 import requests
 
 from snowflake.snowpark.functions import col
-
+root = Root(session)  
 pd.set_option("max_colwidth",None)
 
 ## Default Values
