@@ -8,6 +8,9 @@ import json
 import requests
 
 from snowflake.snowpark.functions import col
+
+cnx = st.connection("snowflake")
+session = cnx.session()
 root = Root(session)  
 pd.set_option("max_colwidth",None)
 
@@ -29,10 +32,7 @@ schema = database.schemas[CORTEX_SEARCH_SCHEMA]
 svc = schema.cortex_search_services[CORTEX_SEARCH_SERVICE]
 #svc = root.databases[CORTEX_SEARCH_DATABASE].schemas[CORTEX_SEARCH_SCHEMA].cortex_search_services[CORTEX_SEARCH_SERVICE]
 #session = get_active_session()
-#root = Root(session)                         
-#added this for 
-cnx = st.connection("snowflake")
-session = cnx.session()
+
 ######
 ######
 
