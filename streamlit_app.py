@@ -131,14 +131,14 @@ def complete(myquestion):
 
 def main():
 
-    st.title(f":speech_balloon: Chat Document Assistant with Snowflake Cortex")
-    st.write("This is the list of documents you already have and that will be used to answer your questions:")
+    st.title(f":speech_balloon: Power School Chat Assistant")
+    #st.write("This is the list of documents you already have and that will be used to answer your questions:")
     #session.sql("USE DATABASE RG_SEARCH_DOCS").collect()
-    docs_available = session.sql("LS @RG_SEARCH_DOCS.DATA.DOCS").collect()
-    list_docs = []
-    for doc in docs_available:
-        list_docs.append(doc["name"])
-    st.dataframe(list_docs)
+    #docs_available = session.sql("LS @RG_SEARCH_DOCS.DATA.DOCS").collect()
+    #list_docs = []
+   # for doc in docs_available:
+    #    list_docs.append(doc["name"])
+    #st.dataframe(list_docs)
 
     config_options()
 
