@@ -90,7 +90,7 @@ def create_prompt (myquestion):
            You are an expert chat assistance that extracs information from the CONTEXT provided
            between <context> and </context> tags.
            When ansering the question contained between <question> and </question> tags
-           be concise and do not hallucinate. 
+           be thorough and do not hallucinate. 
            If you don´t have the information just say so.
            Only anwer the question if you can extract it from the CONTEXT provideed.
            
