@@ -19,9 +19,9 @@ pd.set_option("max_colwidth",None)
 NUM_CHUNKS = 3 # Num-chunks provided as context. Play with this to check how it affects your accuracy
 
 # service parameters
-CORTEX_SEARCH_DATABASE = "RG_SEARCH_DOCS"
+CORTEX_SEARCH_DATABASE = "SG_SEARCH_DOCS"
 CORTEX_SEARCH_SCHEMA = "DATA"
-CORTEX_SEARCH_SERVICE = "RG_SEARCH_SERVICE_CS"
+CORTEX_SEARCH_SERVICE = "SG_SEARCH_SERVICE_CS"
 
 # Retrieve the database
 database = root.databases[CORTEX_SEARCH_DATABASE]
@@ -131,7 +131,7 @@ def complete(myquestion):
 
 def main():
 
-    st.title(f":speech_balloon: Power School Chat Assistant")
+    st.title(f":speech_balloon: Steve's Chat Assistant")
     #st.write("This is the list of documents you already have and that will be used to answer your questions:")
     #session.sql("USE DATABASE RG_SEARCH_DOCS").collect()
     #docs_available = session.sql("LS @RG_SEARCH_DOCS.DATA.DOCS").collect()
