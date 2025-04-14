@@ -59,7 +59,7 @@ def config_options():
     st.sidebar.selectbox('Select your model:',('mistral-large2', 'llama3.1-70b',
                         'llama3.1-8b', 'snowflake-arctic'), key="model_name")
 
-    categories = session.sql("select category from RG_SEARCH_DOCS.DATA.docs_chunks_table group by category").collect()
+    categories = session.sql("select category from SG_SEARCH_DOCS.DATA.docs_chunks_table group by category").collect()
 
     cat_list = ['ALL']
     for cat in categories:
@@ -133,8 +133,8 @@ def main():
 
     st.title(f":speech_balloon: Steve's Chat Assistant")
     #st.write("This is the list of documents you already have and that will be used to answer your questions:")
-    #session.sql("USE DATABASE RG_SEARCH_DOCS").collect()
-    #docs_available = session.sql("LS @RG_SEARCH_DOCS.DATA.DOCS").collect()
+    #session.sql("USE DATABASE SG_SEARCH_DOCS").collect()
+    #docs_available = session.sql("LS @SG_SEARCH_DOCS.DATA.DOCS").collect()
     #list_docs = []
    # for doc in docs_available:
     #    list_docs.append(doc["name"])
