@@ -6,7 +6,6 @@ import snowflake.snowpark.context
 from snowflake.core import Root
 import pandas as pd
 import json
-import requests
 
 from snowflake.snowpark.functions import col
 
@@ -67,7 +66,6 @@ def config_options():
             
     st.sidebar.selectbox('Select what products you are looking for', cat_list, key = "category_value")
 
-    st.sidebar.expander("Session State").write(st.session_state)
 
 def get_similar_chunks_search_service(query):
 
@@ -77,8 +75,6 @@ def get_similar_chunks_search_service(query):
         filter_obj = {"@eq": {"category": st.session_state.category_value} }
         response = svc.search(query, COLUMNS, filter=filter_obj, limit=NUM_CHUNKS)
 
-    st.sidebar.json(response.json())
-    
     return response.json()  
 
 def create_prompt (myquestion):
@@ -154,8 +150,8 @@ def main():
         if relative_paths != "None":
             with st.sidebar.expander("Related Documents"):
                 for path in relative_paths:
-                    cmd2 = f"select GET_PRESIGNED_URL(@docs, '{path}', 360) as URL_LINK from directory(@docs)"
-                    df_url_link = session.sql(cmd2).to_pandas()
+                    cmd2 = "select GET_PRESIGNED_URL(@docs, ?, 360) as URL_LINK from directory(@docs)"
+                    df_url_link = session.sql(cmd2, params=[path]).to_pandas()
                     url_link = df_url_link._get_value(0,'URL_LINK')
         
                     display_url = f"Doc: [{path}]({url_link})"

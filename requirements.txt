@@ -1,5 +1,4 @@
 # requirements.txt
-snowflake-snowpark-python
-streamlit
-requests
-snowflake.core
+snowflake-snowpark-python>=1.51,<2
+streamlit>=1.58,<2
+snowflake.core>=1.12,<2
