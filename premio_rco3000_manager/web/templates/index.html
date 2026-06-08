@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premio RCO-3000 Server Manager</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --border: #475569;
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #f59e0b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .header h1 span { color: var(--primary); }
+        .header-actions { display: flex; gap: 12px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.15s;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: var(--danger-hover); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+        .btn-outline:hover { background: var(--surface-hover); }
+        .btn-sm { padding: 4px 10px; font-size: 12px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: #000; }
+
+        /* Cards */
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .device-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+        .device-card .device-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .device-name { font-size: 18px; font-weight: 600; }
+        .device-host { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+        .device-meta { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
+        .device-meta span { margin-right: 16px; }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-on { background: #166534; color: #bbf7d0; }
+        .status-off { background: #7f1d1d; color: #fecaca; }
+        .status-unknown { background: #44403c; color: #d6d3d1; }
+
+        .device-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            width: 440px;
+            max-width: 90vw;
+        }
+        .modal h2 { margin-bottom: 16px; font-size: 18px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+        /* Toast / notifications */
+        .toast-container {
+            position: fixed;
+            top: 16px; right: 16px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            min-width: 280px;
+            animation: slideIn 0.3s ease;
+        }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.info { border-left: 4px solid var(--primary); }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .empty-state h2 { font-size: 20px; margin-bottom: 8px; color: var(--text); }
+        .empty-state p { margin-bottom: 20px; }
+
+        /* Info panel */
+        .info-panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+            margin-top: 16px;
+            font-size: 13px;
+        }
+        .info-panel table { width: 100%; border-collapse: collapse; }
+        .info-panel td { padding: 4px 8px; }
+        .info-panel td:first-child { color: var(--text-muted); width: 40%; }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 14px; height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><span>Premio</span> RCO-3000 Server Manager</h1>
+        <div class="header-actions">
+            <button class="btn btn-outline" onclick="refreshAll()">Refresh All</button>
+            <button class="btn btn-primary" onclick="showAddDevice()">+ Add Device</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="device-grid" class="device-grid"></div>
+        <div id="empty-state" class="empty-state" style="display:none">
+            <h2>No Devices Registered</h2>
+            <p>Add a Premio RCO-3000 server to get started with remote management.</p>
+            <button class="btn btn-primary" onclick="showAddDevice()">+ Add Device</button>
+        </div>
+    </div>
+
+    <!-- Add Device Modal -->
+    <div id="add-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>Add Premio RCO-3000 Device</h2>
+            <form id="add-form" onsubmit="addDevice(event)">
+                <div class="form-group">
+                    <label>Device Name</label>
+                    <input type="text" id="dev-name" placeholder="e.g. RCO-3000 Lab Unit #1" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>AMT Host / IP</label>
+                        <input type="text" id="dev-host" placeholder="192.168.1.100" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Port</label>
+                        <input type="number" id="dev-port" value="16993">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="dev-user" value="admin" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="dev-pass" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Serial Number</label>
+                        <input type="text" id="dev-serial" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="dev-location" placeholder="e.g. Lab Rack A3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="dev-tls" checked> Use TLS (HTTPS)
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="hideModal('add-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Device</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal">
+            <h2 id="confirm-title">Confirm Action</h2>
+            <p id="confirm-message"></p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="hideModal('confirm-modal')">Cancel</button>
+                <button id="confirm-btn" class="btn btn-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const API = '/api';
+
+        // -- Toast Notifications --
+        function toast(msg, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            el.textContent = msg;
+            container.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        // -- Modal Helpers --
+        function showModal(id) { document.getElementById(id).classList.add('active'); }
+        function hideModal(id) { document.getElementById(id).classList.remove('active'); }
+        function showAddDevice() { showModal('add-modal'); }
+
+        function confirmAction(title, message, onConfirm) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            const btn = document.getElementById('confirm-btn');
+            btn.onclick = () => { hideModal('confirm-modal'); onConfirm(); };
+            showModal('confirm-modal');
+        }
+
+        // -- API Calls --
+        async function api(method, path, body = null) {
+            const opts = { method, headers: { 'Content-Type': 'application/json' } };
+            if (body) opts.body = JSON.stringify(body);
+            const resp = await fetch(`${API}${path}`, opts);
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.detail || data.error || 'Request failed');
+            return data;
+        }
+
+        // -- Device CRUD --
+        async function addDevice(e) {
+            e.preventDefault();
+            try {
+                await api('POST', '/devices', {
+                    name: document.getElementById('dev-name').value,
+                    host: document.getElementById('dev-host').value,
+                    port: parseInt(document.getElementById('dev-port').value),
+                    username: document.getElementById('dev-user').value,
+                    password: document.getElementById('dev-pass').value,
+                    serial_number: document.getElementById('dev-serial').value || null,
+                    location: document.getElementById('dev-location').value || null,
+                    use_tls: document.getElementById('dev-tls').checked,
+                });
+                hideModal('add-modal');
+                document.getElementById('add-form').reset();
+                document.getElementById('dev-port').value = '16993';
+                document.getElementById('dev-user').value = 'admin';
+                toast('Device added successfully', 'success');
+                loadDevices();
+            } catch (err) {
+                toast(err.message, 'error');
+            }
+        }
+
+        async function removeDevice(deviceId, name) {
+            confirmAction('Remove Device', `Remove "${name}"? This cannot be undone.`, async () => {
+                try {
+                    await api('DELETE', `/devices/${deviceId}`);
+                    toast('Device removed', 'success');
+                    loadDevices();
+                } catch (err) { toast(err.message, 'error'); }
+            });
+        }
+
+        // -- AMT Operations --
+        async function getStatus(deviceId) {
+            const badge = document.getElementById(`status-${deviceId}`);
+            badge.innerHTML = '<span class="spinner"></span>';
+            try {
+                const data = await api('GET', `/devices/${deviceId}/status`);
+                const state = data.power.power_state;
+                const cls = state === 'On' ? 'status-on' : state.includes('Off') ? 'status-off' : 'status-unknown';
+                badge.className = `status-badge ${cls}`;
+                badge.textContent = state;
+            } catch (err) {
+                badge.className = 'status-badge status-unknown';
+                badge.textContent = 'Error';
+                toast(`Status check failed: ${err.message}`, 'error');
+            }
+        }
+
+        async function pxeReboot(deviceId, name) {
+            confirmAction(
+                'PXE Boot Re-Image',
+                `This will reboot "${name}" into PXE network boot for re-imaging. The unit will boot from the Premio PXE server. Continue?`,
+                async () => {
+                    toast(`Initiating PXE reboot for ${name}...`, 'info');
+                    try {
+                        const data = await api('POST', `/devices/${deviceId}/pxe-reboot`);
+                        toast(data.message, data.success ? 'success' : 'error');
+                        setTimeout(() => getStatus(deviceId), 5000);
+                    } catch (err) { toast(err.message, 'error'); }
+                }
+            );
+        }
+
+        async function pxeBoot(deviceId) {
+            try {
+                const data = await api('POST', `/devices/${deviceId}/pxe-boot`);
+                toast(data.message, data.success ? 'success' : 'error');
+            } catch (err) { toast(err.message, 'error'); }
+        }
+
+        async function powerAction(deviceId, action, name) {
+            const labels = {
+                'on': 'Power On', 'off': 'Force Power Off',
+                'off-graceful': 'Graceful Shutdown', 'cycle': 'Power Cycle',
+                'cycle-graceful': 'Graceful Reboot', 'reset': 'Hard Reset'
+            };
+            confirmAction(
+                labels[action] || action,
+                `Execute "${labels[action]}" on "${name}"?`,
+                async () => {
+                    try {
+                        const data = await api('POST', `/devices/${deviceId}/power`, { action });
+                        toast(data.message, data.success ? 'success' : 'error');
+                        setTimeout(() => getStatus(deviceId), 3000);
+                    } catch (err) { toast(err.message, 'error'); }
+                }
+            );
+        }
+
+        async function showHwInfo(deviceId) {
+            const panel = document.getElementById(`info-${deviceId}`);
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+                return;
+            }
+            panel.innerHTML = '<span class="spinner"></span> Loading hardware info...';
+            panel.style.display = 'block';
+            try {
+                const data = await api('GET', `/devices/${deviceId}/hw-info`);
+                let html = '<table>';
+                if (data.hardware) {
+                    for (const [k, v] of Object.entries(data.hardware)) {
+                        html += `<tr><td>${k}</td><td>${v || '-'}</td></tr>`;
+                    }
+                }
+                if (data.bios) {
+                    html += `<tr><td colspan="2" style="font-weight:600;padding-top:8px">BIOS</td></tr>`;
+                    for (const [k, v] of Object.entries(data.bios)) {
+                        html += `<tr><td>${k}</td><td>${v || '-'}</td></tr>`;
+                    }
+                }
+                html += '</table>';
+                panel.innerHTML = html;
+            } catch (err) {
+                panel.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span>`;
+            }
+        }
+
+        // -- Render --
+        function renderDeviceCard(id, device) {
+            return `
+            <div class="device-card">
+                <div class="device-header">
+                    <div>
+                        <div class="device-name">${device.name}</div>
+                        <div class="device-host">${device.host}:${device.port || 16993}</div>
+                    </div>
+                    <span id="status-${id}" class="status-badge status-unknown">Unknown</span>
+                </div>
+                <div class="device-meta">
+                    ${device.serial_number ? `<span>S/N: ${device.serial_number}</span>` : ''}
+                    ${device.location ? `<span>Location: ${device.location}</span>` : ''}
+                </div>
+                <div class="device-actions">
+                    <button class="btn btn-sm btn-outline" onclick="getStatus('${id}')">Check Status</button>
+                    <button class="btn btn-sm btn-success" onclick="pxeReboot('${id}', '${device.name}')">PXE Re-Image</button>
+                    <button class="btn btn-sm btn-outline" onclick="pxeBoot('${id}')">Set PXE Boot</button>
+                    <button class="btn btn-sm btn-outline" onclick="powerAction('${id}', 'cycle-graceful', '${device.name}')">Reboot</button>
+                    <button class="btn btn-sm btn-warning" onclick="powerAction('${id}', 'off-graceful', '${device.name}')">Shutdown</button>
+                    <button class="btn btn-sm btn-outline" onclick="showHwInfo('${id}')">HW Info</button>
+                    <button class="btn btn-sm btn-danger" onclick="removeDevice('${id}', '${device.name}')">Remove</button>
+                </div>
+                <div id="info-${id}" class="info-panel" style="display:none"></div>
+            </div>`;
+        }
+
+        async function loadDevices() {
+            try {
+                const devices = await api('GET', '/devices');
+                const grid = document.getElementById('device-grid');
+                const empty = document.getElementById('empty-state');
+                const entries = Object.entries(devices);
+
+                if (entries.length === 0) {
+                    grid.innerHTML = '';
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                empty.style.display = 'none';
+                grid.innerHTML = entries.map(([id, d]) => renderDeviceCard(id, d)).join('');
+
+                // Auto-check status for all devices
+                for (const [id] of entries) {
+                    getStatus(id);
+                }
+            } catch (err) {
+                toast('Failed to load devices', 'error');
+            }
+        }
+
+        function refreshAll() {
+            toast('Refreshing...', 'info');
+            loadDevices();
+        }
+
+        // Init
+        loadDevices();
+    </script>
+</body>
+</html>
