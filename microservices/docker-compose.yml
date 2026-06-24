@@ -1,0 +1,85 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - SERVICE_RETRIEVAL_URL=http://retrieval-service:8001
+      - SERVICE_COMPLETION_URL=http://completion-service:8002
+      - SERVICE_ORCHESTRATOR_URL=http://chat-orchestrator:8003
+      - SERVICE_DOCUMENT_URL=http://document-service:8004
+    depends_on:
+      - chat-orchestrator
+      - retrieval-service
+      - completion-service
+      - document-service
+    networks:
+      - rag-network
+
+  chat-orchestrator:
+    build:
+      context: .
+      dockerfile: chat-orchestrator/Dockerfile
+    ports:
+      - "8003:8003"
+    env_file: .env
+    environment:
+      - SERVICE_RETRIEVAL_URL=http://retrieval-service:8001
+      - SERVICE_COMPLETION_URL=http://completion-service:8002
+    depends_on:
+      - retrieval-service
+      - completion-service
+    networks:
+      - rag-network
+
+  retrieval-service:
+    build:
+      context: .
+      dockerfile: retrieval-service/Dockerfile
+    ports:
+      - "8001:8001"
+    env_file: .env
+    networks:
+      - rag-network
+
+  completion-service:
+    build:
+      context: .
+      dockerfile: completion-service/Dockerfile
+    ports:
+      - "8002:8002"
+    env_file: .env
+    networks:
+      - rag-network
+
+  document-service:
+    build:
+      context: .
+      dockerfile: document-service/Dockerfile
+    ports:
+      - "8004:8004"
+    env_file: .env
+    networks:
+      - rag-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - SERVICE_GATEWAY_URL=http://api-gateway:8000
+    depends_on:
+      - api-gateway
+    networks:
+      - rag-network
+
+networks:
+  rag-network:
+    driver: bridge
